@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CO₂ Emissions AR Visualization</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+    <script>
+        // ✅ Load JSON data
+        fetch('co2_ar_data.json')
+            .then(response => response.json())
+            .then(data => {
+                console.log("Loaded AR Data:", data);
+
+                // ✅ Initialize Three.js
+                const scene = new THREE.Scene();
+                const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                const renderer = new THREE.WebGLRenderer();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                document.body.appendChild(renderer.domElement);
+
+                // ✅ Define colors for each year
+                const colors = { "2000": 0xff0000, "2015": 0x00ff00, "2023": 0x0000ff, "2030": 0xffff00 };
+
+                // ✅ Create bars
+                data.forEach((entry, index) => {
+                    let startX = index * 5 - 10;
+                    let yearIndex = 0;
+
+                    ["2000", "2015", "2023", "2030"].forEach(year => {
+                        let height = entry[year] / 100;
+                        let geometry = new THREE.BoxGeometry(1, height, 1);
+                        let material = new THREE.MeshBasicMaterial({ color: colors[year] });
+                        let cube = new THREE.Mesh(geometry, material);
+                        cube.position.set(startX + yearIndex, height / 2, -5);
+                        scene.add(cube);
+
+                        yearIndex += 1.5;
+                    });
+                });
+
+                // ✅ Set camera position
+                camera.position.z = 15;
+
+                // ✅ Render loop
+                function animate() {
+                    requestAnimationFrame(animate);
+                    renderer.render(scene, camera);
+                }
+                animate();
+            })
+            .catch(error => console.error("Error loading JSON:", error));
+    </script>
+</body>
+</html>

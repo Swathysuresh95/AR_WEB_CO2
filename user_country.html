@@ -1,0 +1,43 @@
+<script>
+    function getUserLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(success, error);
+        } else {
+            alert("Geolocation is not supported by your browser.");
+        }
+    }
+
+    function success(position) {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+
+        // ✅ Reverse Geocoding API (Using OpenStreetMap)
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+            .then(response => response.json())
+            .then(data => {
+                let country = data.address.country;
+                console.log("✅ User is in:", country);
+                fetchCO2Data(country);
+            })
+            .catch(error => console.error("Error fetching location:", error));
+    }
+
+    function error() {
+        alert("Unable to retrieve your location.");
+    }
+
+    function fetchCO2Data(userCountry) {
+        fetch('co2_ar_data.json')  // ✅ Load CO₂ emissions data
+            .then(response => response.json())
+            .then(data => {
+                let countryData = data.find(entry => entry["Country Name"] === userCountry);
+                if (countryData) {
+                    console.log(`✅ CO₂ Data for ${userCountry}:`, countryData);
+                    displayAR(countryData);
+                } else {
+                    alert("⚠️ No CO₂ data available for your location.");
+                }
+            })
+            .catch(error => console.error("Error loading CO₂ data:", error));
+    }
+</script>

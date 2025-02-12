@@ -1,0 +1,6 @@
+fetch('co2_ar_data.json')  // ✅ Load the JSON file
+    .then(response => response.json())  // ✅ Convert JSON into JavaScript object
+    .then(data => {
+        console.log("Loaded AR Data:", data);
+    })
+    .catch(error => console.error("Error loading JSON:", error));

@@ -1,0 +1,31 @@
+<script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+<script src="https://cdn.rawgit.com/jeromeetienne/ar.js/1.7.2/aframe/build/aframe-ar.min.js"></script>
+
+<body onload="getUserLocation()">  <!-- Call location function on page load -->
+
+    <!-- ✅ AR.js Scene -->
+    <a-scene embedded arjs>
+        <a-marker preset="hiro">
+            <a-entity id="barGraph" position="0 0 0"></a-entity>
+        </a-marker>
+        <a-camera-static></a-camera-static>
+    </a-scene>
+
+    <script>
+        function displayAR(data) {
+            let barGraph = document.getElementById("barGraph");
+            
+            let years = ["2000", "2015", "2023", "2030"];
+            let colors = ["red", "green", "blue", "yellow"];
+            
+            years.forEach((year, index) => {
+                let barHeight = data[year] / 100;
+                let bar = document.createElement("a-box");
+                bar.setAttribute("position", `${index * 1.5 - 2} ${barHeight / 2} 0`);
+                bar.setAttribute("height", barHeight);
+                bar.setAttribute("color", colors[index]);
+                barGraph.appendChild(bar);
+            });
+        }
+    </script>
+</body>
